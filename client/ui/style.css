@@ -1,0 +1,357 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css?family=B612+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
+
+@font-face {
+  font-family: heebo;
+  src: url(https://cdn.discordapp.com/attachments/548137697382760460/589533986682961979/Heebo-Regular.ttf);
+}
+
+@font-face {
+  font-family: "AvrileSans-Medium";
+  src: url('./assets/fonts/AvrileSans-Medium.ttf');
+}
+
+@font-face {
+  font-family: "Chalet-Comprime";
+  src: url('./assets/fonts/Chalet-Comprime.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans';
+  src: url('./assets/fonts/PT-Sans.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans-Bold';
+  src: url('./assets/fonts/PT-Sans-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans-Caption';
+  src: url('./assets/fonts/PT-Sans-Caption.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans-Caption-Bold';
+  src: url('./assets/fonts/PT-Sans-Caption-Bold.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans-Expert';
+  src: url('./assets/fonts/PT-Sans-Expert.ttf');
+}
+
+@font-face {
+  font-family: 'PT-Sans-Narrow';
+  src: url('./assets/fonts/PT-Sans-Narrow.ttf');
+}
+
+@font-face {
+  font-family: 'Tanseek';
+  src: url('./assets/fonts/tanseek-modern-pro-arabic-bold.ttf');
+}
+
+@font-face {
+  font-family: "Fishmonger";
+  src: url("./assets/fonts/Fishmonger-CL-Plain.otf");
+}
+
+/* ROOT */
+:root {
+  /* Vars */
+  --header-font-size: 90px;
+
+  /* Colors */
+  --white: white;
+  --black: #000000;
+  --background: rgba(25, 25, 25, 0.8);
+  --darkBackground: #1e1e1e;
+  --green: rgba(33, 165, 23, 0.6);
+  --background: #353535;
+  --text: rgba(255, 255, 255, 0.85);
+  --headerGreen: #4caf50;
+  --headerRed: #d42727;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#Characters-Container {
+  width: 100%;
+  height: 100%;
+  background-color: transparent !important;
+}
+
+#Character-Loading-Container {
+  position: absolute;
+
+  /* Position */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 20%;
+  height: fit-content;
+}
+
+#Character-Loading {
+  position: relative;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#Characters {
+  position: absolute;
+
+  /* AUTO CENTERING */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* SIZE */
+  width: 98%;
+  height: 95%;
+
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+}
+
+button#Disconnect {
+  position: absolute;
+
+  /* Position */
+  top: 0%;
+  right: 0%;
+  transform: translate(10%, -0%);
+
+  /* Size */
+  width: 10%;
+  height: 10%;
+
+  background-image: url("./assets/img/sunstone.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  outline: none;
+}
+
+#Character-Information {
+  position: relative;
+
+  /* Position */
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: fit-content;
+  border-radius: 15px;
+}
+
+#newCharacter {
+  position: relative;
+
+  bottom: 5%;
+  left: 50%;
+  transform: translate(-50%, -5%);
+
+  padding: 10px;
+}
+
+#Character-Creator {
+  position: absolute;
+
+  /* Size */
+  z-index: 999;
+}
+
+.v-dialog::-webkit-scrollbar-thumb {
+  background: white !important; 
+}
+
+.v-dialog::-webkit-scrollbar {
+  width: 5px; 
+}
+
+.v-dialog::-webkit-scrollbar-thumb {
+  background: white !important; 
+}
+
+.v-date-picker-years::-webkit-scrollbar {
+  width: 5px; 
+}
+
+.v-date-picker-years::-webkit-scrollbar-thumb {
+  background: white !important; 
+}
+
+#Character-Cycler {
+  position: absolute;
+
+  /* Position */
+  left: 50%;
+  bottom: 1%;
+  transform: translate(-50%, -1%);
+
+  padding: 8px;
+  background-color: var(--darkBackground);
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#Cycle-Info {
+  font-family: "PT-Sans-Expert";
+  color: var(--white);
+  line-height: 2.2;
+}
+
+#whiteKey {
+  background-color: var(--white);
+  color: var(--background);
+  font-weight: bold;
+}
+
+#Apartment-Container {
+  position: absolute;
+
+  /* Position */
+  top: 5%;
+  left: 1%;
+  transform: translate(-1%, -5%);
+
+  /* Size */
+  width: fit-content;
+}
+
+#Apt-Header {
+  position: relative;
+
+  /* Position */
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -5%);
+
+  /* Font */
+  font-family: "PT-Sans-Expert";
+  font-size: 23px;
+}
+
+#Apartment-Button {
+  position: relative;
+
+  /* Position */
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Colours & Styling */
+  color: var(--white);
+  background-color: none Impo !important;
+  padding: 10px;
+  border-radius: 5px;
+
+  /* Text */
+  text-transform: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+#Apartment-Button:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+#Select-Btn {
+  position: relative;
+
+  /* Position */
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -15%);
+}
+
+#Spawner-Container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: transparent !important;
+}
+
+#Spawner-Map { 
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#Location-Container {
+  position: absolute;
+  display: none;
+
+  /* Position */
+  bottom: 0%;
+  left: 1%;
+  transform: translateY(-5%);
+
+  /* Size */
+  width: 25%;
+
+  /* Other */
+  border: 1px solid white;
+  z-index: 999;
+}
+
+#Button-Container {
+  position: relative;
+  display: flex;
+
+  justify-content: space-between;
+  max-width: 400px;
+  margin: 0 auto;
+
+  width: 100%;
+}
+
+#Locations {
+  position: absolute;
+
+  /* Position */
+  top: 40%;
+  right: 2%;
+  transform: translate(-2%, -40%);
+
+  /* Size */
+  width: 21%;
+
+  /* Other */
+  border: 1px solid white;
+  z-index: 999;
+}
+
+#Locations-Body {
+  position: relative;
+
+  height: 700px;
+  overflow-y: scroll;
+}
+
+#Locations-Body::-webkit-scrollbar {
+  width: 5px; 
+}
+
+#Locations-Body::-webkit-scrollbar-thumb {
+  background: rgb(75, 75, 75) !important; 
+}

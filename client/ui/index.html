@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>LX Characters</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@500&family=Quicksand&display=swap" rel="stylesheet">
+    
+    <!--Google Icon Font -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,500,500i,700,700i" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="./libraries/css/all.css" />
+
+    <!-- Vuetify -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    
+    <!-- Material -->
+    <link rel="stylesheet" href="./libraries/css/material.css">
+
+    <!-- Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <v-app id="Characters-Container">
+      <v-main>
+        <div id="Character-Loading-Container" v-show="loading">
+          <v-container>
+            <v-row class="fill-height" align-content="center" justify="center">
+              <v-col>
+                <v-progress-circular id="Character-Loading" :width="6" :size="75" color="white" indeterminate ></v-progress-circular>
+              </v-col>
+              <v-col style="color:  var(--text); font-family: 'AvrileSans-Medium'; font-size: 20px; text-shadow: 2px 2px 10px black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;" class="text-center" cols="9">{{ loadingState }}</v-col>
+            </v-row>
+          </v-container>
+        </div>
+
+        <div id="Characters" v-show="showCharacters">
+          <button id="Disconnect" @click="ShowDisconnect()"></button>
+          
+          <v-dialog id="Delete-Dialog" v-model="disconnectOption" max-width="350px">
+            <v-card dark>
+              <v-card-title style="background-color: var(--headerGreen);">Disconnect From SunstoneRP</v-card-title>
+              <v-divider></v-divider>
+              <br>
+              <v-card-text style="height: fit-content;">Are you sure you want to disconnect from Suntone Roleplay?</v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-btn color="success darken-1" text @click="Disconnect()">Yes</v-btn>
+                <v-btn color="error darken-1" text @click="disconnectOption = false">No</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <v-card id="Character-Information" dark hover elevation="1" outlined>
+            <v-card-title v-if="selectedCharacter != undefined">
+              <h2 style="font-family: 'PT-Sans';">{{ selectedCharacter.firstname }} {{ selectedCharacter.lastname }} | {{ selectedCharacter.cid }}</h2>
+            </v-card-title>
+
+            <v-card-title v-else>
+              <h2 style="font-family: 'PT-Sans';">Empty Slot</h2>
+            </v-card-title>
+            
+            <v-card-text v-if="selectedCharacter != undefined">
+              <span style="font-family: 'PT-Sans-Caption';"><b>Age</b>: {{ selectedCharacter.age }}</span><br>
+              <div v-if="selectedCharacter.gender == 0"><span style="font-family: 'PT-Sans-Caption';"><b>Gender</b>: Male</span><br></div>
+              <div v-if="selectedCharacter.gender == 1"><span style="font-family: 'PT-Sans-Caption';"><b>Gender</b>: Female</span><br></div>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Nationality</b>: {{ selectedCharacter.nationality }}</span><br>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Job</b>: {{ selectedCharacter.jobName }} ({{ selectedCharacter.jobRank }})</span><br>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Cash</b>: {{ selectedCharacter.cash }}</span><br>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Bank</b>: {{ selectedCharacter.bank }}</span><br>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Phone</b>: {{ selectedCharacter.phone }}</span><br>
+              <span style="font-family: 'PT-Sans-Caption';"><b>Account Number</b>: {{ selectedCharacter.account }}</span><br>
+            </v-card-text>
+            
+            <v-card-text v-else>
+              <span>Press <kbd id="whiteKey" style="font-size: 15px;">Enter</kbd> to create a character in this slot</span>
+            </v-card-text>
+
+            <div v-if="selectedCharacter == undefined">
+              <v-img id="newCharacter" max-height="100px" max-width="100px" src="assets/img/plus.png"></v-img>
+            </div>
+            
+            <v-card-actions v-show="selectedCharacter != undefined">
+              <v-tooltip top>
+                <template #activator="data">
+                  <v-btn class="mx-2" small fab dark color="success" v-on="data.on" @click="PlayCharacter()"><v-icon dark>mdi-check</v-icon></v-btn>
+                </template>
+                <span>Play Character</span>
+              </v-tooltip>
+                  
+              <v-tooltip top>
+                <template #activator="data">
+                  <v-btn class="mx-2" small fab dark color="blue" v-on="data.on" @click="StartEditing()"><v-icon dark>mdi-account-edit</v-icon></v-btn>
+                </template>
+                <span>Edit Character</span>
+              </v-tooltip>
+                  
+              <v-tooltip top>
+                <template #activator="data">
+                  <v-btn class="mx-2" small fab dark color="red" v-on="data.on" @click="ToggleDelete()"><v-icon dark>mdi-delete</v-icon></v-btn>
+                </template>
+                <span>Delete Character</span>
+              </v-tooltip>
+            </v-card-actions>
+          </v-card>
+
+          <v-dialog id="Character-Creator" transition="dialog-top-transition" max-width="600" v-model="showCreator">
+            <template v-slot:default="dialog">
+              <v-card dark>
+                <v-toolbar color="success" dark><h2>New Character</h2></v-toolbar>
+
+                <v-card-text>
+                  <v-form ref="creatorForm" class="px-3">
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="20">
+                          <br>
+                          <v-text-field v-model="charName" :rules="nameRules" outlined label="First Name" append-icon="mdi-rename-box" required></v-text-field>
+                          <v-text-field v-model="charSurname" :rules="nameRules" outlined label="Surname" append-icon="mdi-rename-box" required></v-text-field>
+                          <v-text-field v-model="charNationality" :rules="nationalityRules" outlined label="Nationality" append-icon="mdi-map-marker" required></v-text-field>
+                          <v-textarea v-model="charBackstory" :rules="backstoryRules" outlined label="Backstory" append-outer-icon="mdi-book-open-page-variant" required></v-textarea>
+                          
+                          <v-menu ref="creatorMenu" v-model="creatorMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field v-model="charDob" label="Date of Birth" readonly hint="YYYY-MM-DD format" persistent-hint append-icon="mdi-calendar" v-bind="attrs" v-on="on"></v-text-field>
+                            </template>
+                            <v-date-picker id="Character-DOB" color="success" v-model="charDob" no-title @input="creatorMenu = false" dark></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        
+                        <v-col cols="12" sm="12" md="20">
+                          <v-checkbox v-model="isFemale" label="Female Character" color="success" :ripple=false></v-checkbox>
+                          <v-btn color="success" class="mr-4" @click="CreateCharacter()" :ripple=false>Create</v-btn>
+                          <v-btn color="error" class="mr-4" @click="ResetForm()" :ripple=false>Reset</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-form>
+                </v-card-text>
+              </v-card>
+            </template>
+          </v-dialog>
+
+          <v-dialog id="Character-Editor" transition="dialog-top-transition" max-width="600" v-model="showEditor">
+            <template v-slot:default="dialog">
+              <v-card dark>
+                <v-toolbar color="success" dark><h2>Edit Character</h2></v-toolbar>
+
+                <v-card-text>
+                  <v-form ref="editorForm" class="px-3">
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="20">
+                          <br>
+                          <v-text-field v-model="newCharData.firstname" :rules="nameRules" outlined label="First Name" append-icon="mdi-rename-box" required></v-text-field>
+                          <v-text-field v-model="newCharData.lastname" :rules="nameRules" outlined label="Surname" append-icon="mdi-rename-box" required></v-text-field>
+                          <v-text-field v-model="newCharData.nationality" :rules="nationalityRules" outlined label="Nationality" append-icon="mdi-map-marker" required></v-text-field>
+                          <div v-if="newCharData.backstory">
+                            <v-textarea v-model="newCharData.backstory" :rules="backstoryRules" outlined label="Backstory" append-outer-icon="mdi-book-open-page-variant" required></v-textarea>
+                          </div>
+                          
+                          <v-menu ref="editorMenu" v-model="editorMenu" :close-on-content-click="false" transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-text-field v-model="newCharData.dob" label="Date of Birth" readonly hint="YYYY-MM-DD format" persistent-hint append-icon="mdi-calendar" v-bind="attrs" v-on="on"></v-text-field>
+                            </template>
+                            <v-date-picker id="Character-DOB" color="success" v-model="newCharData.dob" no-title @input="creatorMenu = false" dark></v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        
+                        <v-col cols="12" sm="12" md="20">
+                          <v-checkbox v-model="newCharData.gender" label="Female Character" color="success" :ripple=false></v-checkbox>
+                          <v-btn color="success" class="mr-4" @click="EditCharacter()" :ripple=false>Save</v-btn>
+                          <v-btn color="error" class="mr-4" @click="showEditor = false" :ripple=false>Cancel</v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-form>
+                </v-card-text>
+              </v-card>
+            </template>
+          </v-dialog>
+
+          <v-dialog id="Delete-Dialog" v-model="deleteCheck" max-width="300px">
+            <v-card dark>
+              <v-card-title style="background-color: var(--headerGreen);">Delete Character</v-card-title>
+              <v-divider></v-divider>
+              <br>
+              <v-card-text style="height: fit-content;">Are you sure you want to delete your character? It will completely erase your characters clothing, apartments, inventory, vehicles, etc.</v-card-text>
+              <v-divider></v-divider>
+              <v-card-actions>
+                <v-btn color="success darken-1" text @click="DeleteChar()">Yes</v-btn>
+                <v-btn color="error darken-1" text @click="deleteCheck = false">No</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <div id="Character-Cycler">
+            <div id="Cycle-Info">
+              <span v-if="this.characterIndex == 4 || this.characterIndex == 9">Press <kbd id="whiteKey" style="font-size: 20px;">←</kbd> to go back or <kbd id="whiteKey" style="font-size: 20px;">→</kbd> to scroll to the next set of characters.</span>
+              <span v-else>Press <kbd id="whiteKey" style="font-size: 20px;">←</kbd> or <kbd id="whiteKey" style="font-size: 20px;">→</kbd> to cycle your characters.</span><br>
+              <span v-if="selectedCharacter == undefined">Press <kbd id="whiteKey" style="font-size: 15px;">Enter</kbd> to toggle your character!</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="Apartment-Container" v-show="showApartments">
+          <v-card dark>
+            <v-toolbar color="var(--headerRed)" dark><div id="Apt-Header">Apartment Picker</div></v-toolbar>
+
+            <v-card-text>
+              <v-row v-for="(location, index) in defaultApartments" :key="location.name">
+                <v-col>
+                  <button id="Apartment-Button" @click="ToggleApt(location)">{{ location.label }}</button>
+                </v-col>
+              </v-row>
+            </v-card-text>
+
+            <v-card-actions v-show="Object.keys(selectedApartment).length > 0">
+              <v-tooltip dark top>
+                <template #activator="data">
+                  <v-btn id="Select-Btn" small fab dark color="primary" v-on="data.on" @click="SelectApt()"><v-icon dark>mdi-map-marker</v-icon></v-btn>
+                </template>
+                <span>Select Apartment</span>
+              </v-tooltip>
+            </v-card-actions>
+          </v-card>
+        </div>
+
+        <div id="Spawner-Container" v-show="showMap">
+          <v-card id="Location-Container">
+            <img id="locationImg" width="100%" height="200px"></img>
+            <v-card-title>
+              <h2>{{ selectedLocation.label }}</h2>
+            </v-card-title>
+                  
+            <v-card-text v-html="selectedLocation.information"></v-card-text>
+                  
+            <v-card-actions>
+              <div id="Button-Container">
+                <v-tooltip top>
+                  <template #activator="data">
+                    <v-btn class="mx-2" small fab dark color="primary" v-on="data.on" @click="Spawn()"><v-icon dark>mdi-map-marker</v-icon></v-btn>
+                  </template>
+                  <span>Spawn</span>
+                </v-tooltip>
+                    
+                <v-tooltip top>
+                  <template #activator="data">
+                    <v-btn class="mx-2" small fab dark color="green" v-on="data.on" @click="Spawn('apartment')"><v-icon dark>mdi-home</v-icon></v-btn>
+                  </template>
+                  <span>Home</span>
+                </v-tooltip>
+                    
+                <v-tooltip top>
+                  <template #activator="data">
+                    <v-btn class="mx-2" small fab dark color="orange" v-on="data.on" @click="Spawn('last_location')"><v-icon dark>mdi-exit-to-app</v-icon></v-btn>
+                  </template>
+                  <span>Last Location</span>
+                </v-tooltip>
+              </div>
+            </v-card-actions>
+          </v-card>
+      
+          <v-card id="Locations" class="mx-auto" max-width="300" tile dark>
+            <v-list style="padding: 0px; background-color: none;" dense>
+              <v-card-title style="background-color: var(--headerRed); color: var(--text);" class="justify-center">Map Locations</v-card-title>
+
+              <div id="Locations-Body">
+                <v-list-item-group v-model="selectedItem" color="primary">
+                  <v-list-item v-for="(location, i) in locations" :key="i">
+                    <v-list-item-icon>
+                      <v-icon v-if="location.type == 'general'">mdi-map-marker</v-icon>
+                      <v-icon v-if="location.type == 'police'">mdi-police-badge</v-icon>
+                      <v-icon v-if="location.type == 'apartment'">mdi-home</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title v-text="location.label"></v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </div>
+            </v-list>
+          </v-card>
+          
+          <div id="Spawner-Map"></div>
+        </div>
+      </v-main>
+    </v-app>
+
+    <!-- Axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!-- Vutify & Vue.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="./libraries/js/vue-snotify.min.js"></script>
+
+    <!-- JQuery -->
+    <script src="./libraries/js/jquery.min.js"></script>
+    <script src="events.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

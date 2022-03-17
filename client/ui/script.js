@@ -121,7 +121,6 @@ const Characters = new Vue({
     // Map Data
     sateliteStyle: L.tileLayer('assets/mapStyles/styleSatelite/{z}/{x}/{y}.jpg', {minZoom: 0,maxZoom: 8,noWrap: true,continuousWorld: false,attribution: 'Sunstone RP Spawn Chooser',id: 'SateliteStyle map'}),
     atlasStyle: L.tileLayer('assets/mapStyles/styleAtlas/{z}/{x}/{y}.jpg', {minZoom: 0,maxZoom: 5,noWrap: true,continuousWorld: false,attribution: 'Sunstone RP Spawn Chooser',id: 'styleAtlas map'}),
-    gridStyle: L.tileLayer('assets/mapStyles/styleGrid/{z}/{x}/{y}.png', {minZoom: 0,maxZoom: 5,noWrap: true,continuousWorld: false,attribution: 'Sunstone RP Spawn Chooser',id: 'styleGrid map'}),
 
     // Icon Groups
     groups: {
@@ -468,7 +467,7 @@ const Characters = new Vue({
 
     ToggleLocation(location) {
       const element = $("#Location-Container");
-      console.log("toggled location", JSON.stringify(location));
+      // console.log("toggled location", JSON.stringify(location));
       this.selectedLocation = location;
       if (this.selectedLocation.img != undefined) {
         document.getElementById("locationImg").src = this.selectedLocation.img;
@@ -481,12 +480,12 @@ const Characters = new Vue({
 
     Setup(data) {
       if (this.markers != null) {
-        console.log("RUN ME!");
+        // console.log("RUN ME!");
         $("#Location-Container").css("display", "none");
         this.RemoveApartments();
       }
 
-      console.log(`Setup Map: ${JSON.stringify(data)}`)
+      // console.log(`Setup Map: ${JSON.stringify(data)}`)
       
       this.playerData.lastLocation = data.lastLocation;
       this.playerData.job = data.job.name;
@@ -496,7 +495,7 @@ const Characters = new Vue({
       for (let i = 0; i < this.locations.length; i++) {
         if (this.locations[i].type != "general") {
           if (this.locations[i].type != this.playerData.job) {
-            console.log(`Remove ${this.locations[i].name}`)
+            // console.log(`Remove ${this.locations[i].name}`)
             this.locations.splice(i, 1);
           } else {
             const marker = new L.marker([this.locations[i].position[0], this.locations[i].position[1]], {icon: redPoint}).on('click', () => {
@@ -621,7 +620,7 @@ const Characters = new Vue({
   },
 
   mounted() {
-    // Events
+    // Characters Events
     RegisterEvent("setLoadingState", this.UpdateLoading);
     RegisterEvent("sendCharacters", this.ProcessCharacters);
     RegisterEvent("setup_apartments", this.SetupApartments);
@@ -662,19 +661,19 @@ const Characters = new Vue({
       zoom: 2, // How far you're zoomed in by default
     });
 
-    this.layerController = L.control.layers({ "Satelite": this.sateliteStyle,"Atlas": this.atlasStyle,"Grid": this.gridStyle}, this.groups).addTo(this.map);
+    this.layerController = L.control.layers({ "Satelite": this.sateliteStyle,"Atlas": this.atlasStyle}, this.groups).addTo(this.map);
     this.map.on("click", this.onMapClick);
 
     // Locations UI (RIGHT)
     const locationCard = document.getElementById("Locations");
     locationCard.addEventListener("click", () => {
       const newLocation = this.locations[this.selectedItem];
-      console.log(`CARD CLICKED! | ${JSON.stringify(newLocation)}`);
+      // console.log(`CARD CLICKED! | ${JSON.stringify(newLocation)}`);
       this.ToggleLocation(this.locations[this.selectedItem]);
       // this.selectedLocation = this.locations[this.selectedItem];
     });
 
-    // Events
+    // Map Events
     RegisterEvent("setup_map", this.Setup);
     RegisterEvent("show_map", this.Show);
   }
